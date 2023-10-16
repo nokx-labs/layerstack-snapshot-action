@@ -1,5 +1,9 @@
 # Layerstack Snapshot Action
 
+[![Continuous Integration](https://github.com/nokx-labs/layerstack-snapshot-action/actions/workflows/ci.yml/badge.svg)](https://github.com/nokx-labs/layerstack-snapshot-action/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/nokx-labs/layerstack-snapshot-action/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/nokx-labs/layerstack-snapshot-action/actions/workflows/codeql-analysis.yml)
+[![Check dist/](https://github.com/nokx-labs/layerstack-snapshot-action/actions/workflows/check-dist.yml/badge.svg)](https://github.com/nokx-labs/layerstack-snapshot-action/actions/workflows/check-dist.yml)
+
 GitHub Actions for creating a snapshot of a LayerStack instance
 
 ## Usage
