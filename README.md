@@ -8,8 +8,8 @@ steps:
   - name: Create snapshot
     uses: nokx-labs/layerstack-snapshot-action@v1
     with:
-      accessToken: ${{ secret.accessToken }}
-      accountId: ${{ secret.accountId }}
+      accessToken: ${{ secrets.accessToken }}
+      accountId: ${{ secrets.accountId }}
       instanceId: abcasas
 ```
 

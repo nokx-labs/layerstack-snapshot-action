@@ -49,9 +49,9 @@ jobs:
         id: test-action
         uses: ./
         with:
-          accessToken: ${{ secret.accessToken }}
-          accountId: ${{ secret.accountId }}
-          instanceId: ${{ secret.instanceId }}
+          accessToken: ${{ secrets.accessToken }}
+          accountId: ${{ secrets.accountId }}
+          instanceId: ${{ secrets.instanceId }}
 
       - name: Print Output
         id: output
