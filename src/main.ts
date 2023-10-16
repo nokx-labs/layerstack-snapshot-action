@@ -61,8 +61,8 @@ export async function run(): Promise<void> {
           core.info(
             `Snapshot count reached the max limit ${snapshotLimit}, deleting the oldest snapshot`
           )
-          core.startGroup('Delete the oldest snapshot')
           const oldestSnapshot = snapshotList[0]
+          core.startGroup(`Delete the oldest snapshot (${oldestSnapshot.id})`)
           const deleteSnapshotRes = await fetch(
             `https://api.layerpanel.com/api/cloudserver/account_templates/${oldestSnapshot.id}`,
             {
