@@ -1,8 +1,9 @@
 name: 'Layerstck Create Snapshot Action'
 description: 'GitHub Actions for creating a snapshot of a LayerStack instance'
 author: 'NOKX Labs Limited'
-icon: 'archive'
-color: 'blue'
+branding:
+  icon: 'archive'
+  color: 'blue'
 
 # Define your inputs here.
 inputs:
