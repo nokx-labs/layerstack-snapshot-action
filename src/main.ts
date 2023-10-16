@@ -58,7 +58,6 @@ export async function run(): Promise<void> {
     core.endGroup()
 
     if (snapshotList.length >= snapshotLimit) {
-      core.startGroup(`Snapshot count reached the max limit ${snapshotLimit}`)
       core.info(
         `Snapshot count reached the max limit ${snapshotLimit}, deleting the oldest snapshot`
       )
@@ -80,11 +79,11 @@ export async function run(): Promise<void> {
         )
         return
       }
-      core.info(`Deleted the oldest snapshot (${oldestSnapshot.name})`)
       core.endGroup()
     }
     core.endGroup()
 
+    await wait(1000)
     await core.group(`Create snapshot ${snapshotName}`, async () => {
       // Create snapshot
       const createSnapshotRes = await fetch(
