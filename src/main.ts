@@ -12,7 +12,7 @@ export async function run(): Promise<void> {
     const accountId = core.getInput('accountId')
     const instanceId = core.getInput('instanceId')
     const snapshotLimit = Number(core.getInput('snapshotLimit')) || 2
-    const snapshotName = `${instanceId}-${new Date()
+    const snapshotName = core.getInput('snapshotName') || `${instanceId}-${new Date()
       .toISOString()
       .slice(0, 10)
       .replace(/-/g, '')}`
@@ -33,8 +33,10 @@ export async function run(): Promise<void> {
     }
 
     const headers = {
-      Account: accountId,
-      AccessToken: accessToken
+      'Account': accountId,
+      'AccessToken': accessToken,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
     }
 
     // Get snapshot list, if snapshot count is 2, delete the oldest snapshot
@@ -83,7 +85,7 @@ export async function run(): Promise<void> {
       {
         method: 'POST',
         body: JSON.stringify({
-          template_name: snapshotName
+          tamplate_name: snapshotName,
         }),
         headers
       }
