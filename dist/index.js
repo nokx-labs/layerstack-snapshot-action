@@ -2785,55 +2785,62 @@ async function run() {
             'Content-Type': 'application/json'
         };
         // Get snapshot list, if snapshot count is 2, delete the oldest snapshot
-        const getSnapshotListRes = await fetch(`https://api.layerpanel.com/api/cloudserver/account/templates/${accountId}`, {
-            headers
-        });
-        if (!getSnapshotListRes.ok) {
-            const resJson = await getSnapshotListRes.json();
-            core.setFailed(`Failed to get snapshot list, res: ${JSON.stringify(resJson)}`);
-            return;
-        }
-        const snapshotList = (await getSnapshotListRes.json());
-        if (snapshotList.length >= snapshotLimit) {
-            core.info(`Snapshot count reached the max limit ${snapshotLimit}, deleting the oldest snapshot`);
-            const oldestSnapshot = snapshotList[0];
-            const deleteSnapshotRes = await fetch(`https://api.layerpanel.com/api/cloudserver/account_templates/${oldestSnapshot.id}`, {
-                method: 'DELETE',
-                headers
-            });
-            if (!deleteSnapshotRes.ok) {
-                const resJson = await deleteSnapshotRes.json();
-                core.setFailed(`Failed to delete the oldest snapshot, res: ${JSON.stringify(resJson)}`);
-                return;
-            }
-            core.info(`Deleted the oldest snapshot (${oldestSnapshot.name})`);
-        }
-        // Create snapshot
-        const createSnapshotRes = await fetch(`https://api.layerpanel.com/api/cloudserver/${instanceId}/create_account_vm_template`, {
-            method: 'POST',
-            body: JSON.stringify({
-                tamplate_name: snapshotName
-            }),
-            headers
-        });
-        if (!createSnapshotRes.ok) {
-            const resJson = await createSnapshotRes.json();
-            core.setFailed(`Failed to create snapshot, res: ${JSON.stringify(resJson)}`);
-            return;
-        }
-        do {
+        await core.group(`Check snapshot count exceeds the limit ${snapshotLimit}`, async () => {
             const getSnapshotListRes = await fetch(`https://api.layerpanel.com/api/cloudserver/account/templates/${accountId}`, {
                 headers
             });
-            const snapshotList = (await getSnapshotListRes.json());
-            const snapshot = snapshotList.find(snapshot => snapshot.name === snapshotName);
-            if (snapshot) {
-                core.info('Snapshot created successfully');
-                break;
+            if (!getSnapshotListRes.ok) {
+                const resJson = await getSnapshotListRes.json();
+                core.setFailed(`Failed to get snapshot list, res: ${JSON.stringify(resJson)}`);
+                return;
             }
-            core.info('Waiting for snapshot to be created, retrying in 5 seconds');
-            await (0, wait_1.wait)(5000);
-        } while (true);
+            const snapshotList = (await getSnapshotListRes.json());
+            if (snapshotList.length >= snapshotLimit) {
+                core.info(`Snapshot count reached the max limit ${snapshotLimit}, deleting the oldest snapshot`);
+                core.startGroup('Delete the oldest snapshot');
+                const oldestSnapshot = snapshotList[0];
+                const deleteSnapshotRes = await fetch(`https://api.layerpanel.com/api/cloudserver/account_templates/${oldestSnapshot.id}`, {
+                    method: 'DELETE',
+                    headers
+                });
+                if (!deleteSnapshotRes.ok) {
+                    const resJson = await deleteSnapshotRes.json();
+                    core.setFailed(`Failed to delete the oldest snapshot, res: ${JSON.stringify(resJson)}`);
+                    return;
+                }
+                core.info(`Deleted the oldest snapshot (${oldestSnapshot.name})`);
+                core.endGroup();
+            }
+            core.endGroup();
+        });
+        await core.group(`Create snapshot ${snapshotName}`, async () => {
+            // Create snapshot
+            const createSnapshotRes = await fetch(`https://api.layerpanel.com/api/cloudserver/${instanceId}/create_account_vm_template`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    tamplate_name: snapshotName
+                }),
+                headers
+            });
+            if (!createSnapshotRes.ok) {
+                const resJson = await createSnapshotRes.json();
+                core.setFailed(`Failed to create snapshot, res: ${JSON.stringify(resJson)}`);
+                return;
+            }
+            do {
+                const getSnapshotListRes = await fetch(`https://api.layerpanel.com/api/cloudserver/account/templates/${accountId}`, {
+                    headers
+                });
+                const snapshotList = (await getSnapshotListRes.json());
+                const snapshot = snapshotList.find(snapshot => snapshot.name === snapshotName);
+                if (snapshot) {
+                    core.info('Snapshot created successfully');
+                    break;
+                }
+                core.info('Waiting for snapshot to be created, retrying in 5 seconds');
+                await (0, wait_1.wait)(5000);
+            } while (true);
+        });
         // Set outputs for other workflow steps to use
         core.setOutput('snapshotName', snapshotName);
     }
