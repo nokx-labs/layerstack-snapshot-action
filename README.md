@@ -1,8 +1,9 @@
-## Layerstack Snapshot Action
+# Layerstack Snapshot Action
 
 GitHub Actions for creating a snapshot of a LayerStack instance
 
 ## Usage
+
 ```yaml
 steps:
   - name: Create snapshot
@@ -37,4 +38,5 @@ If you are reporting a bug, please include:
 - Detailed steps to reproduce the bug.
 
 ## License
+
 [MIT license](LICENSE)
