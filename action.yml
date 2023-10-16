@@ -1,0 +1,30 @@
+name: 'Layerstck Create Snapshot Action'
+description: 'GitHub Actions for creating a snapshot of a LayerStack instance'
+author: 'NOKX Labs Limited'
+
+# Define your inputs here.
+inputs:
+  accessToken:
+    description: 'LayerStack API access token'
+    required: true
+  accountId:
+    description: 'LayerStack account ID - XX-12345678'
+    required: true
+  instanceId:
+    description: 'LayerStack instance ID'
+    required: true
+  snapshotLimit: 
+    description: 'Maximum number of snapshots to keep'
+    required: false
+    default: 2
+  snapshotName:
+    description: 'Name of the snapshot'
+    required: false
+
+outputs:
+  snapshotName:
+    description: 'Name of the snapshot'
+
+runs:
+  using: node20
+  main: dist/index.js
