@@ -20,7 +20,6 @@ inputs:
   snapshotName:
     description: 'Name of the snapshot'
     required: false
-    default: '${instanceId}-${YYYYMMDD}'
 
 outputs:
   snapshotName:

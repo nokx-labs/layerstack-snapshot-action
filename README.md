@@ -29,7 +29,7 @@ steps:
 <!-- AUTO-DOC-INPUT:END -->
 ## Report Bugs
 
-Report bugs at https://github.com/nokx-labs/layerstack-snapshot-action/issues.
+Report bugs at <https://github.com/nokx-labs/layerstack-snapshot-action/issues>.
 
 If you are reporting a bug, please include:
 
