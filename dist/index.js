@@ -2764,10 +2764,8 @@ async function run() {
         const accountId = core.getInput('accountId');
         const instanceId = core.getInput('instanceId');
         const snapshotLimit = Number(core.getInput('snapshotLimit')) || 2;
-        const snapshotName = `${instanceId}-${new Date()
-            .toISOString()
-            .slice(0, 10)
-            .replace(/-/g, '')}`;
+        const snapshotName = core.getInput('snapshotName') ||
+            `${instanceId}-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}`;
         if (!accessToken) {
             core.setFailed('accessToken is required');
             return;
@@ -2782,7 +2780,9 @@ async function run() {
         }
         const headers = {
             Account: accountId,
-            AccessToken: accessToken
+            AccessToken: accessToken,
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
         };
         // Get snapshot list, if snapshot count is 2, delete the oldest snapshot
         const getSnapshotListRes = await fetch(`https://api.layerpanel.com/api/cloudserver/account/templates/${accountId}`, {
@@ -2812,7 +2812,7 @@ async function run() {
         const createSnapshotRes = await fetch(`https://api.layerpanel.com/api/cloudserver/${instanceId}/create_account_vm_template`, {
             method: 'POST',
             body: JSON.stringify({
-                template_name: snapshotName
+                tamplate_name: snapshotName
             }),
             headers
         });

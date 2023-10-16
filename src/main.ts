@@ -12,10 +12,9 @@ export async function run(): Promise<void> {
     const accountId = core.getInput('accountId')
     const instanceId = core.getInput('instanceId')
     const snapshotLimit = Number(core.getInput('snapshotLimit')) || 2
-    const snapshotName = core.getInput('snapshotName') || `${instanceId}-${new Date()
-      .toISOString()
-      .slice(0, 10)
-      .replace(/-/g, '')}`
+    const snapshotName =
+      core.getInput('snapshotName') ||
+      `${instanceId}-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}`
 
     if (!accessToken) {
       core.setFailed('accessToken is required')
@@ -33,9 +32,9 @@ export async function run(): Promise<void> {
     }
 
     const headers = {
-      'Account': accountId,
-      'AccessToken': accessToken,
-      'Accept': 'application/json',
+      Account: accountId,
+      AccessToken: accessToken,
+      Accept: 'application/json',
       'Content-Type': 'application/json'
     }
 
@@ -85,7 +84,7 @@ export async function run(): Promise<void> {
       {
         method: 'POST',
         body: JSON.stringify({
-          tamplate_name: snapshotName,
+          tamplate_name: snapshotName
         }),
         headers
       }
