@@ -2797,7 +2797,6 @@ async function run() {
         const snapshotList = (await getSnapshotListRes.json());
         core.endGroup();
         if (snapshotList.length >= snapshotLimit) {
-            core.startGroup(`Snapshot count reached the max limit ${snapshotLimit}`);
             core.info(`Snapshot count reached the max limit ${snapshotLimit}, deleting the oldest snapshot`);
             const oldestSnapshot = snapshotList[0];
             core.startGroup(`Delete the oldest snapshot (${oldestSnapshot.id})`);
@@ -2810,10 +2809,10 @@ async function run() {
                 core.setFailed(`Failed to delete the oldest snapshot, res: ${JSON.stringify(resJson)}`);
                 return;
             }
-            core.info(`Deleted the oldest snapshot (${oldestSnapshot.name})`);
             core.endGroup();
         }
         core.endGroup();
+        await (0, wait_1.wait)(1000);
         await core.group(`Create snapshot ${snapshotName}`, async () => {
             // Create snapshot
             const createSnapshotRes = await fetch(`https://api.layerpanel.com/api/cloudserver/${instanceId}/create_account_vm_template`, {
