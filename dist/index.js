@@ -2764,8 +2764,8 @@ async function run() {
         const accountId = core.getInput('accountId');
         const instanceId = core.getInput('instanceId');
         const snapshotLimit = Number(core.getInput('snapshotLimit')) || 2;
-        const snapshotName = core.getInput('snapshotName') ||
-            `${instanceId}-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}`;
+        const snapshotName = core.getInput('snapshotName') || `${instanceId}-${Date.now()}`;
+        const waitUntilSnapshotCreated = core.getInput('waitUntilSnapshotCreated') === 'true';
         if (!accessToken) {
             core.setFailed('accessToken is required');
             return;
@@ -2832,7 +2832,9 @@ async function run() {
                     headers
                 });
                 const snapshotList = (await getSnapshotListRes.json());
-                const snapshot = snapshotList.find(snapshot => snapshot.name === snapshotName);
+                const snapshot = snapshotList.find(snapshot => snapshot.name === snapshotName && waitUntilSnapshotCreated
+                    ? snapshot.status === 'ready'
+                    : true);
                 if (snapshot) {
                     core.info('Snapshot created successfully');
                     break;

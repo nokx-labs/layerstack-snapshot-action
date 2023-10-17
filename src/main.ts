@@ -13,8 +13,9 @@ export async function run(): Promise<void> {
     const instanceId = core.getInput('instanceId')
     const snapshotLimit = Number(core.getInput('snapshotLimit')) || 2
     const snapshotName =
-      core.getInput('snapshotName') ||
-      `${instanceId}-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}`
+      core.getInput('snapshotName') || `${instanceId}-${Date.now()}`
+    const waitUntilSnapshotCreated =
+      core.getInput('waitUntilSnapshotCreated') === 'true'
 
     if (!accessToken) {
       core.setFailed('accessToken is required')
@@ -114,8 +115,10 @@ export async function run(): Promise<void> {
         )
         const snapshotList = (await getSnapshotListRes.json()) as Snapshot[]
 
-        const snapshot = snapshotList.find(
-          snapshot => snapshot.name === snapshotName
+        const snapshot = snapshotList.find(snapshot =>
+          snapshot.name === snapshotName && waitUntilSnapshotCreated
+            ? snapshot.status === 'working'
+            : true
         )
 
         if (snapshot) {

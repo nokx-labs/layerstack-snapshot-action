@@ -23,6 +23,10 @@ inputs:
   snapshotName:
     description: 'Name of the snapshot'
     required: false
+  waitUntilCreated:
+    description: 'Wait until snapshot is created'
+    required: false
+    default: true
 
 outputs:
   snapshotName:
