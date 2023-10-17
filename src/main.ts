@@ -24,23 +24,9 @@ export async function run(): Promise<void> {
     const snapshotName =
       core.getInput('snapshotName', { trimWhitespace: true }) ||
       `${instanceId}-${Date.now()}`
-    const waitUntilSnapshotCreated =
-      core.getBooleanInput('waitUntilCreated') || true
-
-    if (!accessToken) {
-      core.setFailed('accessToken is required')
-      return
-    }
-
-    if (!accountId) {
-      core.setFailed('accountId is required')
-      return
-    }
-
-    if (!instanceId) {
-      core.setFailed('instanceId is required')
-      return
-    }
+    const waitUntilSnapshotCreated = core.getBooleanInput('waitUntilCreated', {
+      required: true
+    })
 
     const headers = {
       Account: accountId,
@@ -66,6 +52,17 @@ export async function run(): Promise<void> {
       return
     }
     const snapshotList = (await getSnapshotListRes.json()) as Snapshot[]
+
+    const hasSnapshotRunning = snapshotList.some(
+      snapshot => snapshot.status === 'creating'
+    )
+
+    if (hasSnapshotRunning) {
+      core.setFailed(
+        `There is a snapshot running, please wait until it's completed`
+      )
+      return
+    }
 
     if (snapshotList.length >= snapshotLimit) {
       const oldestSnapshot = snapshotList[0]
@@ -128,7 +125,9 @@ export async function run(): Promise<void> {
         )
 
         if (snapshot) {
-          core.info('Snapshot created successfully')
+          core.info(
+            `Snapshot created successfully, res: ${JSON.stringify(snapshot)}`
+          )
           break
         }
         core.info('Waiting for snapshot to be created, retrying in 5 seconds')
