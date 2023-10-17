@@ -95,8 +95,8 @@ export async function run(): Promise<void> {
         return
       }
     }
-
-    await wait(1000)
+    core.info('Wait for 5 seconds to make sure the snapshot is deleted')
+    await wait(5000)
     await core.group(`Create snapshot ${snapshotName}`, async () => {
       // Create snapshot
       const createSnapshotRes = await fetch(
@@ -118,6 +118,7 @@ export async function run(): Promise<void> {
         return
       }
 
+      core.info(`Snapshot request sent successfully, waiting for completion...`)
       do {
         const getSnapshotListRes = await fetch(
           `https://api.layerpanel.com/api/cloudserver/account/templates/${accountId}`,
@@ -127,10 +128,10 @@ export async function run(): Promise<void> {
         )
         const snapshotList = (await getSnapshotListRes.json()) as Snapshot[]
 
-        const snapshot = snapshotList.find(snapshot =>
-          snapshot.name === snapshotName && waitUntilSnapshotCreated
-            ? snapshot.status === 'working'
-            : true
+        const snapshot = snapshotList.find(
+          snapshot =>
+            snapshot.name === snapshotName &&
+            (waitUntilSnapshotCreated ? snapshot.status === 'working' : true)
         )
 
         if (snapshot) {

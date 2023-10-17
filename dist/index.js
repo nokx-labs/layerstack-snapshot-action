@@ -2818,7 +2818,8 @@ async function run() {
                 return;
             }
         }
-        await (0, wait_1.wait)(1000);
+        core.info('Wait for 5 seconds to make sure the snapshot is deleted');
+        await (0, wait_1.wait)(5000);
         await core.group(`Create snapshot ${snapshotName}`, async () => {
             // Create snapshot
             const createSnapshotRes = await fetch(`https://api.layerpanel.com/api/cloudserver/${instanceId}/create_account_vm_template`, {
@@ -2833,14 +2834,14 @@ async function run() {
                 core.setFailed(`Failed to create snapshot, res: ${JSON.stringify(resJson)}`);
                 return;
             }
+            core.info(`Snapshot request sent successfully, waiting for completion...`);
             do {
                 const getSnapshotListRes = await fetch(`https://api.layerpanel.com/api/cloudserver/account/templates/${accountId}`, {
                     headers
                 });
                 const snapshotList = (await getSnapshotListRes.json());
-                const snapshot = snapshotList.find(snapshot => snapshot.name === snapshotName && waitUntilSnapshotCreated
-                    ? snapshot.status === 'working'
-                    : true);
+                const snapshot = snapshotList.find(snapshot => snapshot.name === snapshotName &&
+                    (waitUntilSnapshotCreated ? snapshot.status === 'working' : true));
                 if (snapshot) {
                     core.info(`Snapshot created successfully, res: ${JSON.stringify(snapshot)}`);
                     // Set outputs for other workflow steps to use
