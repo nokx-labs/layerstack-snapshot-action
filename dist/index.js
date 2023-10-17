@@ -2833,7 +2833,7 @@ async function run() {
                 });
                 const snapshotList = (await getSnapshotListRes.json());
                 const snapshot = snapshotList.find(snapshot => snapshot.name === snapshotName && waitUntilSnapshotCreated
-                    ? snapshot.status === 'ready'
+                    ? snapshot.status === 'working'
                     : true);
                 if (snapshot) {
                     core.info('Snapshot created successfully');

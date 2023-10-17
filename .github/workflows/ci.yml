@@ -38,7 +38,7 @@ jobs:
 
   test-action:
     name: GitHub Actions Test
-    runs-on: ['self-hosted', 'linux']
+    runs-on: [self-hosted, linux]
 
     steps:
       - name: Checkout
