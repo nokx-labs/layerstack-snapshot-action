@@ -2765,7 +2765,7 @@ async function run() {
         const instanceId = core.getInput('instanceId');
         const snapshotLimit = Number(core.getInput('snapshotLimit')) || 2;
         const snapshotName = core.getInput('snapshotName') || `${instanceId}-${Date.now()}`;
-        const waitUntilSnapshotCreated = core.getInput('waitUntilSnapshotCreated') === 'true';
+        const waitUntilSnapshotCreated = core.getInput('waitUntilCreated') === 'true';
         if (!accessToken) {
             core.setFailed('accessToken is required');
             return;
