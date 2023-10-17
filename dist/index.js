@@ -2784,8 +2784,6 @@ async function run() {
             Accept: 'application/json',
             'Content-Type': 'application/json'
         };
-        // Get snapshot list, if snapshot count is 2, delete the oldest snapshot
-        core.info(`Check snapshot count exceeds the limit ${snapshotLimit}`);
         const getSnapshotListRes = await fetch(`https://api.layerpanel.com/api/cloudserver/account/templates/${accountId}`, {
             headers
         });
@@ -2800,6 +2798,8 @@ async function run() {
             core.setFailed(`There is a snapshot running, please wait until it's completed`);
             return;
         }
+        // Get snapshot list, if snapshot count is 2, delete the oldest snapshot
+        core.info(`Check snapshot count exceeds the limit ${snapshotLimit}`);
         if (snapshotList.length >= snapshotLimit) {
             const oldestSnapshot = snapshotList[0];
             core.info(`Snapshot count reached the max limit ${snapshotLimit}, deleting the oldest snapshot (${oldestSnapshot.id})`);

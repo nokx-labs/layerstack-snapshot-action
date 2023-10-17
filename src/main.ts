@@ -35,9 +35,6 @@ export async function run(): Promise<void> {
       'Content-Type': 'application/json'
     }
 
-    // Get snapshot list, if snapshot count is 2, delete the oldest snapshot
-    core.info(`Check snapshot count exceeds the limit ${snapshotLimit}`)
-
     const getSnapshotListRes = await fetch(
       `https://api.layerpanel.com/api/cloudserver/account/templates/${accountId}`,
       {
@@ -64,6 +61,8 @@ export async function run(): Promise<void> {
       return
     }
 
+    // Get snapshot list, if snapshot count is 2, delete the oldest snapshot
+    core.info(`Check snapshot count exceeds the limit ${snapshotLimit}`)
     if (snapshotList.length >= snapshotLimit) {
       const oldestSnapshot = snapshotList[0]
       core.info(
