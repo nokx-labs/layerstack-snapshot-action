@@ -15,7 +15,7 @@ export async function run(): Promise<void> {
     const snapshotName =
       core.getInput('snapshotName') || `${instanceId}-${Date.now()}`
     const waitUntilSnapshotCreated =
-      core.getInput('waitUntilSnapshotCreated') === 'true'
+      core.getInput('waitUntilCreated') === 'true'
 
     if (!accessToken) {
       core.setFailed('accessToken is required')
