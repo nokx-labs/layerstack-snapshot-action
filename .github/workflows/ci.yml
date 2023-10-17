@@ -52,7 +52,6 @@ jobs:
           accessToken: ${{ secrets.accessToken }}
           accountId: ${{ secrets.accountId }}
           instanceId: ${{ secrets.instanceId }}
-          waitUntilCreated: true
 
       - name: Print Output
         id: output

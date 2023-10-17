@@ -16,7 +16,7 @@ inputs:
   instanceId:
     description: 'LayerStack instance ID'
     required: true
-  snapshotLimit: 
+  maxSnapshotNums: 
     description: 'Maximum number of snapshots to keep'
     required: false
     default: 2
@@ -25,6 +25,10 @@ inputs:
     required: false
   waitUntilCreated:
     description: 'Wait until snapshot is created'
+    required: false
+    default: true
+  deleteOldestIfExceedsMax: 
+    description: 'Delete oldest snapshot if exceeds max number of snapshots'
     required: false
     default: true
 

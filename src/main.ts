@@ -20,13 +20,17 @@ export async function run(): Promise<void> {
       required: true,
       trimWhitespace: true
     })
-    const snapshotLimit = Number(core.getInput('snapshotLimit')) || 2
+    const maxSnapshotNums = Number(core.getInput('maxSnapshotNums')) || 2
     const snapshotName =
       core.getInput('snapshotName', { trimWhitespace: true }) ||
       `${instanceId}-${Date.now()}`
     const waitUntilSnapshotCreated = core.getBooleanInput('waitUntilCreated', {
       required: true
     })
+    const deleteOldestIfExceedsMax = core.getBooleanInput(
+      'deleteOldestIfExceedsMax',
+      { required: true }
+    )
 
     const headers = {
       Account: accountId,
@@ -62,11 +66,17 @@ export async function run(): Promise<void> {
     }
 
     // Get snapshot list, if snapshot count is 2, delete the oldest snapshot
-    core.info(`Check snapshot count exceeds the limit ${snapshotLimit}`)
-    if (snapshotList.length >= snapshotLimit) {
+    core.info(`Check snapshot count exceeds the limit ${maxSnapshotNums}`)
+    if (snapshotList.length >= maxSnapshotNums) {
+      if (!deleteOldestIfExceedsMax) {
+        core.setFailed(
+          `Snapshot count exceeds the limit ${maxSnapshotNums}, please delete one manually and try again`
+        )
+        return
+      }
       const oldestSnapshot = snapshotList[0]
       core.info(
-        `Snapshot count reached the max limit ${snapshotLimit}, deleting the oldest snapshot (${oldestSnapshot.id})`
+        `Snapshot count exceeds the limit ${maxSnapshotNums}, delete the oldest snapshot (${oldestSnapshot.id} - ${oldestSnapshot.name})`
       )
       const deleteSnapshotRes = await fetch(
         `https://api.layerpanel.com/api/cloudserver/account_templates/${oldestSnapshot.id}`,
@@ -127,15 +137,15 @@ export async function run(): Promise<void> {
           core.info(
             `Snapshot created successfully, res: ${JSON.stringify(snapshot)}`
           )
+          // Set outputs for other workflow steps to use
+          core.setOutput('snapshotName', snapshot.name)
+          core.setOutput('snapshotSize', snapshot.size)
           break
         }
         core.info('Waiting for snapshot to be created, retrying in 5 seconds')
         await wait(5000)
       } while (true)
     })
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('snapshotName', snapshotName)
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)
